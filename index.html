@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraHub // Next-Gen Real OTP Gateway</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+</head>
+<body>
+
+    <div class="mesh-container">
+        <div class="blur-orb orb-cyan"></div>
+        <div class="blur-orb orb-magenta"></div>
+        <div class="blur-orb orb-amber"></div>
+    </div>
+
+    <div id="recaptcha-container"></div>
+
+    <div class="auth-wrapper" id="authBox">
+        <div id="loginForm" class="cyber-card visible-card">
+            <h2 class="glitch-text">Access Core</h2>
+            <div class="cyber-input-group">
+                <label>User Identifier / Phone</label>
+                <input type="text" id="loginUserOrPhone" placeholder="system.node@identity">
+            </div>
+            <div class="cyber-input-group">
+                <label>Security Key</label>
+                <input type="password" id="loginPass" placeholder="••••••••">
+            </div>
+            <div class="meta-row">
+                <label class="cyber-checkbox">
+                    <input type="checkbox" id="toggleLoginPass" onclick="togglePassword('loginPass')">
+                    <span class="checkmark"></span>
+                    <span class="label-text">Reveal Pass</span>
+                </label>
+                <a href="#" class="neon-link" onclick="switchAuth('forgot')">Recover Crypt?</a>
+            </div>
+            <button class="btn-cyber-primary" onclick="handleLogin()">
+                <span class="btn-text">Authenticate</span>
+            </button>
+            <p class="switch-foot">New operative? <a href="#" onclick="switchAuth('signup')">Initialize Profile</a></p>
+        </div>
+
+        <div id="signupForm" class="cyber-card hidden">
+            <h2 class="glitch-text">Build Identity</h2>
+            <div class="cyber-input-group">
+                <label>Legal Entity Name</label>
+                <input type="text" id="regName" placeholder="John Doe">
+            </div>
+            <div class="cyber-input-group">
+                <label>Global Namespace Tag</label>
+                <input type="text" id="regUser" placeholder="unique_handle">
+            </div>
+            <div class="cyber-input-group">
+                <label>Cipher Password</label>
+                <input type="password" id="regPass" placeholder="8+ tokens">
+            </div>
+            <div class="cyber-input-group">
+                <label>Verify Cipher</label>
+                <input type="password" id="regRePass" placeholder="Re-enter password">
+            </div>
+            <div class="cyber-input-group">
+                <label>Com-Link Mobile</label>
+                <div class="com-link-wrapper">
+                    <select id="regCountryCode" class="cyber-select">
+                        <option value="+91">🇮🇳 +91</option>
+                        <option value="+1">🇺🇸 +1</option>
+                    </select>
+                    <input type="tel" id="regMobile" placeholder="9876543210">
+                    <button class="btn-cyber-secondary mini-btn" onclick="sendOTPFlow('signup')">Transmit OTP</button>
+                </div>
+            </div>
+            <div class="cyber-input-group hidden" id="otpGroup">
+                <label>Enter Real SMS OTP</label>
+                <input type="text" id="regOTP" placeholder="******">
+            </div>
+            <div class="twin-btn-layout">
+                <button class="btn-cyber-outline" onclick="switchAuth('login')">Abort</button>
+                <button class="btn-cyber-primary" onclick="handleSignUp()"><span class="btn-text">Deploy</span></button>
+            </div>
+        </div>
+
+        <div id="forgotForm" class="cyber-card hidden">
+            <h2 class="glitch-text">Patch Cipher</h2>
+            <p class="card-subtitle">Input verified data link to request credential patching.</p>
+            <div class="cyber-input-group">
+                <label>Com-Link Mobile</label>
+                <div class="com-link-wrapper">
+                    <select id="forgotCountryCode" class="cyber-select">
+                        <option value="+91">🇮🇳 +91</option>
+                    </select>
+                    <input type="tel" id="forgotMobile" placeholder="9876543210">
+                    <button class="btn-cyber-secondary mini-btn" onclick="sendOTPFlow('forgot')">Transmit OTP</button>
+                </div>
+            </div>
+            <div class="cyber-input-group hidden" id="forgotOtpGroup">
+                <label>Verification Token</label>
+                <input type="text" id="forgotOTP" placeholder="••••••">
+            </div>
+            <div class="cyber-input-group hidden" id="newPassGroup">
+                <label>New Root Cipher Configuration</label>
+                <input type="password" id="forgotNewPass" placeholder="Enter fresh string">
+            </div>
+            <div class="twin-btn-layout">
+                <button class="btn-cyber-outline" onclick="switchAuth('login')">Cancel</button>
+                <button class="btn-cyber-primary" onclick="handleResetPassword()"><span class="btn-text">Patch</span></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="premium-mainframe hidden" id="appBox">
+        <header class="navbar-mainframe">
+            <div class="brand-monogram">
+                <h1>AURA<span>//</span>HUB</h1>
+            </div>
+            <div class="awwwards-profile-pill" onclick="toggleProfileDrawer()">
+                <div class="profile-meta-data">
+                    <span id="displayNavName">Matrix Operative</span>
+                    <small id="displayNavUser">@node</small>
+                </div>
+                <div class="avatar-wrapper-ring">
+                    <img src="" alt="Identity" id="navAvatar" class="pill-avatar-asset">
+                </div>
+            </div>
+        </header>
+
+        <div class="content-matrix-layout">
+            <main class="core-workspace-panel">
+                <div class="interactive-upload-zone">
+                    <div class="glass-upload-box">
+                        <input type="file" id="fileInput" accept=".pdf, .jpg, .jpeg, .png">
+                        <button class="btn-cyber-primary upload-trigger-btn" onclick="uploadFile()">
+                            <span class="btn-text">Sync Encrypted File</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="terminal-dashboard-grid">
+                    <div class="matrix-panel">
+                        <div class="panel-tag">Vault Repositories</div>
+                        <ul id="fileList" class="custom-scroll-list"></ul>
+                    </div>
+                    <div class="matrix-panel">
+                        <div class="panel-tag-header">
+                            <div class="panel-tag">Telemetry Event Logs</div>
+                            <button class="btn-cyber-danger-outline purge-btn" onclick="clearHistory()">Purge History</button>
+                        </div>
+                        <ul id="historyList" class="custom-scroll-list log-list"></ul>
+                    </div>
+                </div>
+            </main>
+
+            <div class="profile-modal-overlay hidden" id="modalOverlay" onclick="toggleProfileDrawer()"></div>
+            <div class="profile-drawer closed" id="profileDrawer">
+                <div class="modal-card-interior">
+                    <div class="modal-header-section">
+                        <h3>Identity Parameters</h3>
+                        <button class="close-modal-trigger" onclick="toggleProfileDrawer()">×</button>
+                    </div>
+                    
+                    <div class="avatar-creative-hub">
+                        <div class="avatar-edit-ring">
+                            <img src="" alt="Large View Source" id="editAvatarPreview" class="avatar-large-asset">
+                        </div>
+                        <label for="avatarUploadInput" class="btn-cyber-secondary photo-edit-trigger">Upload New Asset</label>
+                        <input type="file" id="avatarUploadInput" accept="image/*" onchange="previewAndSaveAvatar()" style="display:none;">
+                    </div>
+
+                    <div class="cyber-input-group">
+                        <label>Update Full Display Name</label>
+                        <input type="text" id="editFullName">
+                    </div>
+                    <div class="cyber-input-group">
+                        <label>Modify Secure Com-Link</label>
+                        <input type="tel" id="editMobile">
+                    </div>
+                    
+                    <div class="modal-action-footer">
+                        <button class="btn-cyber-primary footprint-full-btn" onclick="saveProfileChanges()">
+                            <span class="btn-text">Commit Parameters</span>
+                        </button>
+                        <button class="btn-cyber-danger footprint-full-btn" onclick="handleLogout()">
+                            <span class="btn-text">Invalidate Session</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
